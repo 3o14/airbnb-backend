@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 CUSTOM_APPS = [
     'houses.apps.HousesConfig',
+    'users.apps.UsersConfig'
 ]
 
 SYSTEM_APPS = [
@@ -109,9 +110,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Asia/Seoul"
 
 USE_I18N = True
 
@@ -127,3 +128,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Auth
+
+AUTH_USER_MODEL = 'users.User'
