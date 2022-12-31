@@ -37,6 +37,11 @@ class Room(CommonModel):
     def __str__(self) -> str:
         return self.name
     
+    # 방법1 models.py에 작성
+    def total_amenities(self):
+        print(self)
+        return "hello"
+    
 class Amenity(CommonModel):
     """ Amenity Definition """
     
