@@ -44,9 +44,18 @@ class Room(CommonModel):
         return self.name
     
     # 방법1 models.py에 작성
-    def total_amenities(self):
-        print(self)
-        return "hello"
+    def total_amenities(room):
+        return room.amenities.count()
+    
+    def rating(room):
+        count = room.reviews.count()
+        if count == 0:
+            return "리뷰 없음"
+        else:
+            total_rating = 0
+            for review in room.reviews.all().values("rating"):
+                total_rating += review["rating"]
+            return round(total_rating / count, 2)
     
 class Amenity(CommonModel):
     """ Amenity Definition """
