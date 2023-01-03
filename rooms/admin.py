@@ -1,9 +1,15 @@
 from django.contrib import admin
 from .models import Room, Amenity
 
+@admin.action(description="가격 0원으로 설정하기")
+def reset_prices(model_admin, request, rooms):
+    for room in rooms.all():
+        room.price = 0
+        room.save()
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
     
+    actions = (reset_prices,)
     list_display = (
         "name",
         "price",
