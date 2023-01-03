@@ -24,10 +24,15 @@ class RoomAdmin(admin.ModelAdmin):
         "updated_at",
     )
     
-    # 방법2 admin.py에 작성
-    def total_amenities(self, room):
-        print(room)
-        return room.amenities.count()
+    search_fields = (
+        "name",
+        "^price",
+        # ^ : ~로 시작하는 방 검색하기
+        # = : 완전히 동일한 검색결과 찾기
+        # 아무것도 적지 않을 경우 : contains 포함하는 것 검색
+        "owner__username"
+        # 이렇게도 가능함
+    )
 
 @admin.register(Amenity)
 class AmenityAdmin(admin.ModelAdmin):
