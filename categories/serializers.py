@@ -1,22 +1,21 @@
 from rest_framework import serializers
 from .models import Category
 
-class CategorySerializer(serializers.Serializer):   
-    pk = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(
-        required=True,
-        max_length=50,
-    )
-    kind = serializers.ChoiceField(
-        choices=Category.CategoryKindChoices.choices,
-    )
-    created_at = serializers.DateTimeField(read_only=True)
-    
-    def create(self, validated_data):
-        return Category.objects.create(**validated_data)
-    
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get("name", instance.name)
-        instance.kind = validated_data.get("kind", instance.kind)
-        instance.save()
-        return instance
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        
+        # fields = 어떤 필드를 보이게 할지 설정
+        # 모든 필드 보이게 하기
+        fields = "__all__" 
+        
+        # 제외시킬 필드 고르기
+        exclude = (
+            "created_at",
+        )
+        
+        # 포함시킬 필드 고르기
+        include = (
+            "name",
+            "kind",
+        )
