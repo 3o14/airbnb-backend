@@ -2,7 +2,12 @@ from rest_framework.views import APIView
 from django.db import transaction
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError
+from rest_framework.exceptions import (
+    NotFound,
+    NotAuthenticated,
+    ParseError,
+    PermissionDenied,
+)
 from .models import Amenity, Room
 from categories.models import Category
 from .serializers import RoomListSerializer, RoomDetailSerializer
@@ -60,7 +65,11 @@ class AmenityDetail(APIView):
 class Rooms(APIView):
     def get(self, request):
         all_rooms = Room.objects.all()
-        serializer = RoomListSerializer(all_rooms, many=True)
+        serializer = RoomListSerializer(
+            all_rooms,
+            many=True,
+            context={"request": request},
+        )
         return Response(serializer.data)
 
     def post(self, request):
@@ -105,7 +114,71 @@ class RoomDetail(APIView):
 
     def get(self, request, pk):
         room = self.get_object(pk)
-        serializer = RoomDetailSerializer(room)
+        
+        # 데이터를 보내기 위한 serializer
+        serializer = RoomDetailSerializer(
+            room,
+            # context를 통해 원하는 데이터를 넘겨줄 수 있음
+            context={"request": request},
+        )
         return Response(serializer.data)
     
     
+    def put(self, request, pk):
+        room = self.get_object(pk)
+        
+        # 로그인된 사용자가 아닐 경우 room을 수정할 수 없음
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+        # 방의 주인이 아닐 경우 또한 room을 수정할 수 없음
+        if room.owner != request.user:
+            raise PermissionDenied
+        
+        serializer = RoomDetailSerializer(
+            room,
+            data = request.data,
+            partial = True,
+        )
+        
+        if serializer.is_valid():
+            category_pk = request.get("category")
+            if category_pk:
+                try:
+                    category = Category.objects.get(pk=category_pk)
+                    if category.kind == Category.CategoryKindChoices.EXPERIENCES:
+                        raise ParseError("The category kind should be rooms")
+                except Category.DoesNotExist:
+                    raise ParseError(detail="Category not found")
+            try:
+                with transaction.atomic():
+                    if category_pk:
+                        room = serializer.save(category=category)
+                    else:
+                        room = serializer.save()
+
+                    amenities = request.data.get("amenities")
+                    if amenities:
+                        room.amenities.clear()
+                        for amenity_pk in amenities:
+                            amenity = Amenity.objects.get(pk=amenity_pk)
+                            room.amenities.add(amenity)
+
+                    return Response(RoomDetailSerializer(room).data)
+            except Exception as e:
+                print(e)
+                raise ParseError("amenity not found")
+        else:
+            return Response(serializer.errors) 
+
+    def delete(self, request, pk):
+        room = self.get_object(pk)
+        
+        # 로그인된 사용자가 아닐 경우 room을 삭제할 수 없음
+        # request.user : 현재 로그인한 유저
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+        # 방의 주인이 아닐 경우 또한 room을 삭제할 수 없음
+        if room.owner != request.user:
+            raise PermissionDenied
+        room.delete()
+        return Response(status=HTTP_204_NO_CONTENT)
