@@ -1,8 +1,10 @@
 from rest_framework.views import APIView
+from django.db import transaction
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound, NotAuthenticated
+from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError
 from .models import Amenity, Room
+from categories.models import Category
 from .serializers import RoomListSerializer, RoomDetailSerializer
 
 
@@ -64,9 +66,32 @@ class Rooms(APIView):
     def post(self, request):
         serializer = RoomDetailSerializer(data=request.data)
         if serializer.is_valid():
-            room = serializer.save()
-            serializer = RoomDetailSerializer(room)
-            return Response(serializer.data)
+            category_pk = request.data.get("category")
+            if not category_pk:
+                # 잘못된 데이터일 경우 일으키는 에러
+                raise ParseError("Category is required.")
+            try:
+                # 카테고리를 갖고 있을 경우 request.data로부터 그 id를 가져옴
+                category = Category.objects.get(pk=category_pk)
+                # 카테고리가 Rooms 카테고리가 아닐 경우 오류 발생시킴
+                if category.kind == Category.CategoryKindChoices.EXPERIENCES:
+                    raise ParseError("The category kind should be 'rooms'")
+            except Category.DoesNotExist:
+                raise ParseError("Category not found")
+            try:
+                with transaction.atomic():
+                    room = serializer.save(
+                        owner=request.user,
+                        category=category,
+                    )
+                    amenities = request.data.get("amenities")
+                    for amenity_pk in amenities:
+                        amenity = Amenity.objects.get(pk=amenity_pk)
+                        room.amenities.add(amenity)
+                    serializer = RoomDetailSerializer(room)
+                    return Response(serializer.data)  
+            except Exception:
+                raise ParseError("Amenity not found")
         else:
             raise NotAuthenticated
 
@@ -82,3 +107,5 @@ class RoomDetail(APIView):
         room = self.get_object(pk)
         serializer = RoomDetailSerializer(room)
         return Response(serializer.data)
+    
+    
