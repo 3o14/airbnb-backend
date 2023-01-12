@@ -144,3 +144,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Auth
 
 AUTH_USER_MODEL = 'users.User'
+
+# 사진파일이 업로드될 파일
+MEDIA_ROOT = "uploads"
+# 사진을 노출시킬 url
+MEDIA_URL = "user-uploads/"
+
+PAGE_SIZE = 3
