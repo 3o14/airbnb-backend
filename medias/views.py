@@ -17,6 +17,7 @@ class PhotoDetail(APIView):
 
     def delete(self, request, pk):
         photo = self.get_object(pk)
+        # 방인지 경험인지 확인 후 그 주인과 request의 user가 같은지 확인
         if (photo.room and photo.room.owner != request.user) or (
             photo.experience and photo.experience.host != request.user
         ):
