@@ -92,6 +92,7 @@ class WishlistToggle(APIView):
     def put(self, request, pk, room_pk):
         wishlist = self.get_list(pk, request.user)
         room = self.get_room(room_pk)
+        # 존재하는지 확인만 해줌 .exists()
         if wishlist.rooms.filter(pk=room.pk).exists():
             wishlist.rooms.remove(room)
         else:
