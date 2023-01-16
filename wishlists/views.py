@@ -58,11 +58,13 @@ class WishlistDetail(APIView):
 
     def put(self, request, pk):
         wishlist = self.get_object(pk, request.user)
-        serializer = WishlistSerializer(
-            wishlist,
-            data=request.data,
-            partial=True,
+        serializer = WishlistSerializer( 
+            wishlist, # 기존 wishlist 가져오기
+            data=request.data, # 사용자가 입력한 정보로 수정하기
+            partial=True, # 부분 수정 허용
         )
+        
+        # 유효성 검증
         if serializer.is_valid():
             wishlist = serializer.save()
             serializer = WishlistSerializer(
