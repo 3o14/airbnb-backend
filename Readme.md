@@ -30,19 +30,16 @@
 * POST /users
 * GET /users/username  (공개될 정보)
 * POST /users/log-in
-* POST /users/change-password
+* PUT /users/change-password
 * POST /users/github
 
 
 {
-    "last_login": "2023-01-11T19:07:49.327300+09:00",
-    "username": "wonju",
-    "email": "",
-    "date_joined": "2022-12-28T18:18:27.200285+09:00",
-    "avatar": "",
-    "name": "원주",
-    "is_host": null,
-    "gender": "",
-    "language": "",
-    "currency": ""
+    "username": "wonju2",
+    "email": "wonju2@wonju.com",
+    "name": "이원주2",
+    "gender": "female",
+    "language": "kr",
+    "currency": "won",
+    "password": "123456",
 }
