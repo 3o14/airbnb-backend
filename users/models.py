@@ -22,7 +22,7 @@ class User(AbstractUser):
     
     # 사용자 프로필사진 -> ImageField()를 쓰려면 Pillow 가 설치되어 있어야 함
     # blank=True: 필드가 필수사항이 아니게 설정
-    avatar = models.ImageField(blank=True)
+    avatar = models.URLField(blank=True)
     # 이름 입력창
     name = models.CharField(max_length=150, default="")
     # 유저가 호스트일 경우

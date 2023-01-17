@@ -26,9 +26,23 @@
 * DELETE /medias/1
 
 ## Users
+* GET PUT /me (공개되지 않을 개인적인 정보)
+* POST /users
+* GET /users/username  (공개될 정보)
+* POST /users/log-in
+* POST /users/change-password
+* POST /users/github
 
-GET PUT /me
-POST /users
-POST /users/log-in
-POST /users/change-password
-POST /users/github
+
+{
+    "last_login": "2023-01-11T19:07:49.327300+09:00",
+    "username": "wonju",
+    "email": "",
+    "date_joined": "2022-12-28T18:18:27.200285+09:00",
+    "avatar": "",
+    "name": "원주",
+    "is_host": null,
+    "gender": "",
+    "language": "",
+    "currency": ""
+}

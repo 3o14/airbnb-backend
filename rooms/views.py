@@ -13,7 +13,7 @@ from rest_framework.exceptions import (
 )
 from .models import Amenity, Room
 from categories.models import Category
-from .serializers import RoomListSerializer, RoomDetailSerializer
+from . import serializers
 from reviews.serializers import ReviewSerializer
 from medias.serializers import PhotoSerializer
 from bookings.models import Booking
@@ -22,15 +22,15 @@ from bookings.serializers import PublicBookingSerializer, CreateRoomBookingSeria
 class Amenities(APIView):
     def get(self, request):
         all_amenities = Amenity.objects.all()
-        serializer = AmenitySerializer(all_amenities, many=True)
+        serializer = serializers.AmenitySerializer(all_amenities, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = AmenitySerializer(data=request.data)
+        serializer = serializers.AmenitySerializer(data=request.data)
         if serializer.is_valid():
             amenity = serializer.save()
             return Response(
-                AmenitySerializer(amenity).data,
+                serializers.AmenitySerializer(amenity).data,
             )
         else:
             return Response(serializer.errors)
@@ -45,12 +45,12 @@ class AmenityDetail(APIView):
         
     def get(self, request, pk):
         amenity = self.get_object(pk)
-        serializer = AmenitySerializer(amenity)
+        serializer = serializers.AmenitySerializer(amenity)
         return Response(serializer.data)
 
     def put(self, request, pk):
         amenity = self.get_object(pk)
-        serializer = AmenitySerializer(
+        serializer = serializers.AmenitySerializer(
             amenity,
             data=request.data,
             partial=True,
@@ -58,7 +58,7 @@ class AmenityDetail(APIView):
         if serializer.is_valid():
             updated_amenity = serializer.save()
             return Response(
-                AmenitySerializer(updated_amenity).data,
+                serializers.AmenitySerializer(updated_amenity).data,
             )
         else:
             return Response(serializer.errors)
@@ -74,7 +74,7 @@ class Rooms(APIView):
     
     def get(self, request):
         all_rooms = Room.objects.all()
-        serializer = RoomListSerializer(
+        serializer = serializers.RoomListSerializer(
             all_rooms,
             many=True,
             context={"request": request},
@@ -82,7 +82,7 @@ class Rooms(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = RoomDetailSerializer(data=request.data)
+        serializer = serializers.RoomDetailSerializer(data=request.data)
         if serializer.is_valid():
             category_pk = request.data.get("category")
             if not category_pk:
@@ -103,7 +103,7 @@ class Rooms(APIView):
                     for amenity_pk in amenities:
                         amenity = Amenity.objects.get(pk=amenity_pk)
                         room.amenities.add(amenity)
-                    serializer = RoomDetailSerializer(room)
+                    serializer = serializers.RoomDetailSerializer(room)
                     return Response(serializer.data)
             except Exception:
                 raise ParseError("Amenity not found")
@@ -125,7 +125,7 @@ class RoomDetail(APIView):
         room = self.get_object(pk)
         
         # 데이터를 보내기 위한 serializer
-        serializer = RoomDetailSerializer(
+        serializer = serializers.RoomDetailSerializer(
             room,
             # context를 통해 원하는 데이터를 넘겨줄 수 있음
             context={"request": request},
