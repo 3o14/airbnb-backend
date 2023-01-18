@@ -18,8 +18,8 @@
 * GET /experiences/1/perks
 * GET POST /experiences/1/bookings
 * GET PUT DELETE /experiences/1/bookings
-* GET POST /perks
-* GET PUT DELETE /perks/1
+* GET POST /perks [x]
+* GET PUT DELETE /perks/1 [x]
 
 ## Medias
 * POST /medias
@@ -29,8 +29,9 @@
 * GET PUT /me (공개되지 않을 개인적인 정보)
 * POST /users
 * GET /users/username  (공개될 정보)
-* POST /users/log-in
 * PUT /users/change-password
+* POST /users/log-in
+* POST /users/log-out
 * POST /users/github
 
 

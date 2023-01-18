@@ -1,3 +1,5 @@
+import jwt
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -87,11 +89,11 @@ class LogIn(APIView):
             request,
             username=username,
             password=password,
-        )
+        ) # username 또는 password가 잘못되어서 user를 받지 못할 경우가 있을 수 있음
         if user:
             login(request, user)
             return Response({"ok": "Welcome!"})
-        else:
+        else: # user를 받지 못했을 경우 error
             return Response({"error": "wrong password"})
 
 
@@ -102,3 +104,26 @@ class LogOut(APIView):
     def post(self, request):
         logout(request)
         return Response({"ok": "bye!"})
+    
+
+class JWTLogIn(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        # username과 password 확인 후 올바른 정보면 토큰을 발행한다 
+        if not username or not password:
+            raise ParseError
+        user = authenticate( # username과 password가 올바르면 그에 해당하는 user를 줌
+            request,
+            username=username,
+            password=password,
+        )
+        if user:
+            token = jwt.encode(
+                {"pk": user.pk},
+                settings.SECRET_KEY,
+                algorithm="HS256",
+            )
+            return Response({"token": token})
+        else:
+            return Response({"error": "wrong password"})  
