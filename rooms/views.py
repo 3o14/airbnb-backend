@@ -68,7 +68,7 @@ class AmenityDetail(APIView):
                 serializer.errors,
                 status=HTTP_400_BAD_REQUEST,
             )
-
+        
     def delete(self, request, pk):
         amenity = self.get_object(pk)
         amenity.delete()
@@ -114,7 +114,10 @@ class Rooms(APIView):
             except Exception:
                 raise ParseError("Amenity not found")
         else:
-            return Response(serializer.errors)
+            return Response(
+                serializer.errors,
+                status=HTTP_400_BAD_REQUEST,
+            )
 
 
 class RoomDetail(APIView):
@@ -146,7 +149,7 @@ class RoomDetail(APIView):
         if room.owner != request.user:
             raise PermissionDenied
         
-        serializer = RoomDetailSerializer(
+        serializer = serializers.RoomDetailSerializer(
             room,
             data = request.data,
             partial = True,
@@ -175,7 +178,7 @@ class RoomDetail(APIView):
                             amenity = Amenity.objects.get(pk=amenity_pk)
                             room.amenities.add(amenity)
 
-                    return Response(RoomDetailSerializer(room).data)
+                    return Response(serializers.RoomDetailSerializer(room).data)
             except Exception as e:
                 print(e)
                 raise ParseError("amenity not found")

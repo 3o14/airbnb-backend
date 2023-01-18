@@ -1,5 +1,6 @@
 from rest_framework.test import APITestCase
 from . import models
+from users.models import User
 
 class TestAmenities(APITestCase):
     
@@ -9,7 +10,7 @@ class TestAmenities(APITestCase):
     
     URL = "/api/v1/rooms/amenities/"
 
-    # 어메니티 객체를 생성하는 함수
+    # 어메니티를 생성하는 함수
     def setUp(self):
         models.Amenity.objects.create(
             name=self.NAME,
@@ -84,7 +85,7 @@ class TestAmenity(APITestCase):
     NAME = "Test Amenity"
     DESC = "Test Dsc"
 
-    # 어메니티 하나의 객체 생성
+    # 하나의 어메니티 생성
     def setUp(self):
         models.Amenity.objects.create(
             name=self.NAME,
@@ -150,3 +151,25 @@ class TestAmenity(APITestCase):
         response = self.client.delete("/api/v1/rooms/amenities/1")
 
         self.assertEqual(response.status_code, 204)
+        
+
+class TestRooms(APITestCase):
+    
+    # 유저 생성
+    def setUp(self):
+        user = User.objects.create( # 유저 생성
+            username="test",
+        )
+        user.set_password("123") # 비밀번호 설정
+        user.save() # 비밀번호(해쉬) 저장
+        self.user = user
+
+    def test_create_room(self):
+
+        response = self.client.post("/api/v1/rooms/")
+
+        self.assertEqual(response.status_code, 403)
+
+        self.client.force_login(
+            self.user,
+        )
