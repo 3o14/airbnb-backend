@@ -58,8 +58,6 @@ class RoomDetailSerializer(serializers.ModelSerializer):
         ).exists()
 
 
-
-
 class RoomListSerializer(serializers.ModelSerializer):
 
     rating = serializers.SerializerMethodField()

@@ -90,6 +90,8 @@ class Rooms(APIView):
     def post(self, request):
         serializer = serializers.RoomDetailSerializer(data=request.data)
         if serializer.is_valid():
+            
+            # 카테고리 선택은 필수
             category_pk = request.data.get("category")
             if not category_pk:
                 raise ParseError("Category is required.")
