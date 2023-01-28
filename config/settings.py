@@ -177,3 +177,6 @@ CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"] # 127.0.0.1 도메인에서 fet
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000"] # post 요청을 보낼 수 있는 웹사이트 지정
+
+
+GH_SECRET = env("GH_SECRET")
