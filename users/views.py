@@ -95,7 +95,10 @@ class LogIn(APIView):
             login(request, user)
             return Response({"ok": "Welcome!"})
         else: # user를 받지 못했을 경우 error
-            return Response({"error": "wrong password"})
+            return Response(
+                {"error": "wrong password"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class LogOut(APIView):
