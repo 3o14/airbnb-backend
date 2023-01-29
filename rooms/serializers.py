@@ -50,7 +50,6 @@ class RoomDetailSerializer(serializers.ModelSerializer):
         if request:
             return room.owner == request.user
         return False
-        return room.owner == request.user
 
     # 찜 한지 안한지
     def get_is_liked(self, room):
