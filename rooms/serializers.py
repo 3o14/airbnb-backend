@@ -46,17 +46,21 @@ class RoomDetailSerializer(serializers.ModelSerializer):
     
     def get_is_owner(self, room):
         # serializer에 설정해둔 context로 request값 가져오기
-        request = self.context["request"]
+        request = self.context.get("request")
+        if request:
+            return room.owner == request.user
+        return False
         return room.owner == request.user
 
     # 찜 한지 안한지
     def get_is_liked(self, room):
-        request = self.context["request"]
-        if request.user.is_authenticated:
-            return Wishlist.objects.filter(
-                user=request.user,
-                rooms__pk=room.pk,
-            ).exists()
+        request = self.context.get("request")
+        if request:
+            if request.user.is_authenticated:
+                return Wishlist.objects.filter(
+                    user=request.user,
+                    rooms__pk=room.pk,
+                ).exists()
         return False
 
 class RoomListSerializer(serializers.ModelSerializer):

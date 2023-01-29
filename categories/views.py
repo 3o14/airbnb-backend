@@ -5,4 +5,6 @@ from .serializers import CategorySerializer
 # 인자로 APIView를 받는다
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
-    queryset = Category.objects.all()
+    queryset = Category.objects.filter(
+        kind=Category.CategoryKindChoices.ROOMS,
+    )
