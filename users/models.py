@@ -26,7 +26,7 @@ class User(AbstractUser):
     # 이름 입력창
     name = models.CharField(max_length=150, default="")
     # 유저가 호스트일 경우
-    is_host = models.BooleanField(null=True)
+    is_host = models.BooleanField(default=False)
     
     gender = models.CharField(max_length=10, choices=GenderChoices.choices,)
     language = models.CharField(max_length=2, choices=LanguageChoices.choices,)
